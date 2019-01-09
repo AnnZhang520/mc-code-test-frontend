@@ -520,6 +520,7 @@
     document.write("<div style='text-align:center'>Press 'LEFT' 'UP' 'RIGHT' 'DOWN' key to play!</div>")
     document.write("<div style='text-align:center'>Press 'L' to auto run LEFT-TURN! 'ALT+L' to auto step!</div>")
     document.write("<div style='text-align:center'>Press 'R' to auto run RIGHT-TURN! 'ALT+R' to auto step!</div>")
+
     var xMax = rows[0].children.length - 1;
     var yMax = rows.length - 1;
     var topLeft = rows[0].children[0];
@@ -534,11 +535,14 @@
     var stepX = 0;
     var stepY = 0;
 
+    window.addEventListener("resize", function(){
+      rat.style.left = rows[stepY].children[stepX].offsetLeft + 1 + "px";
+      rat.style.top = rows[stepY].children[stepX].offsetTop + 1 + "px";
+    });
+
     var rat = document.getElementById("rats");
     rat.style.left = topLeft.offsetLeft + 1 + "px";
     rat.style.top = topLeft.offsetTop + 1 + "px";
-    rat.left = topLeft.offsetLeft + 1;
-    rat.top = topLeft.offsetTop + 1;
     document.onkeydown = move;
     document.onkeyup = congratulation;
     function move(e){
@@ -574,51 +578,49 @@
           }
           break;
         }
-        return rat.style.left = rat.left+'px',rat.style.top = rat.top+'px';
+        return rat.style.left = rows[stepY].children[stepX].offsetLeft + 1 + "px", rat.style.top = rows[stepY].children[stepX].offsetTop + 1 + "px";
     }
     var move_left = function(rat){
       console.log("panel[" + stepY + "][" + stepX + "]: ");
       console.log(panel[stepY][stepX]);
       if(stepX > 0 && !panel[stepY][stepX].left){
+        footprint();
         stepX--;
-        rat.left = rat.left - 22;
-        rows[stepY].children[stepX].style.background = rgb();
-        rows[stepY].children[stepX].innerHTML = stepsCount.toString();
-        stepsCount++;
+        rat.style.left = rows[stepY].children[stepX].offsetLeft + 1 + "px";
       }
     }
     var move_up = function(rat){
       console.log("panel[" + stepY + "][" + stepX + "]: ");
       console.log(panel[stepY][stepX]);
       if(stepY > 0 && !panel[stepY][stepX].top){
+        footprint();
         stepY--;
-        rat.top = rat.top - 22;
-        rows[stepY].children[stepX].style.background = rgb();
-        rows[stepY].children[stepX].innerHTML = stepsCount.toString();
-        stepsCount++;
+        rat.style.top = rows[stepY].children[stepX].offsetTop + 1 + "px";
       }
     }
     var move_right= function(rat){
       console.log("panel[" + stepY + "][" + stepX + "]: ");
       console.log(panel[stepY][stepX]);
       if(stepX < xMax && !panel[stepY][stepX].right){
+        footprint();
         stepX++;
-        rat.left = rat.left + 22;
-        rows[stepY].children[stepX].style.background = rgb();
-        rows[stepY].children[stepX].innerHTML = stepsCount.toString();
-        stepsCount++;
+        rat.style.left = rows[stepY].children[stepX].offsetLeft + 1 + "px";
       }
     }
     var move_down = function(rat){
       console.log("panel[" + stepY + "][" + stepX + "]: ");
       console.log(panel[stepY][stepX]);
       if(stepY < yMax && !panel[stepY][stepX].bottom){
+        footprint();
         stepY++;
-        rat.top = rat.top + 22;
-        rows[stepY].children[stepX].style.background = rgb();
-        rows[stepY].children[stepX].innerHTML = stepsCount.toString();
-        stepsCount++;
+        rat.style.top = rows[stepY].children[stepX].offsetTop + 1 + "px";
       }
+    }
+
+    function footprint(){
+      rows[stepY].children[stepX].style.background = rgb();
+      rows[stepY].children[stepX].innerHTML = stepsCount.toString();
+      stepsCount++;
     }
 
     function congratulation(){
@@ -669,17 +671,16 @@
     }
 
     var stepsCount = 0;
-    var quit = false;
     var direct = "right";
     var forward = {"right":move_right, "down":move_down, "left": move_left, "up":move_up};
     function autoMoveLeft(rat){
-      while(!((stepX == xMax) && (stepY == yMax)) && !quit){
+      while(!((stepX == xMax) && (stepY == yMax))){
         turnLeft();
         forward[direct](rat);
       }
     }
     function autoMoveRight(rat){
-      while(!((stepX == xMax) && (stepY == yMax)) && !quit){
+      while(!((stepX == xMax) && (stepY == yMax))){
         turnRight();
         forward[direct](rat);
       }
